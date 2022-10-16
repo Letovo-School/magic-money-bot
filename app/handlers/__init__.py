@@ -8,9 +8,12 @@ import time
 
 from pyrogram import Client, types
 
+from app.callbackquery import CallbackQuery
+from app.dependencies import Postgresql
+
 
 async def init(
-        client: Client
+        client: Client, cbQuery: CallbackQuery, db: Postgresql
 ):
     handlers = [
         # Dynamically import
@@ -28,7 +31,7 @@ async def init(
 
     # All kwargs provided to get_init_args are those that handlers may access
     to_init = (
-        get_init_coro(handler, client=client)
+        get_init_coro(handler, client=client, cbQuery=cbQuery, db=db, modules=modules)
         for handler in handlers
     )
 
@@ -70,7 +73,6 @@ def get_init_coro(handler, /, **kwargs):
 
 async def _init_handler(handler, kwargs):
     try:
-        # log.debug(f"Loading handler {handler.__name__}…")
         start_time = time.perf_counter()
         await handler.init(**kwargs)
         took = datetime.timedelta(seconds=time.perf_counter() - start_time)
