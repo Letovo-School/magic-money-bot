@@ -1,2 +1,3 @@
 ./.idea/discord.xml
-.env.localmagic-money.session
+.env.local
+magic-money.session
